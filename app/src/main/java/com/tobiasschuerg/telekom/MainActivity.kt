@@ -46,7 +46,8 @@ class MainActivity : AppCompatActivity() {
                     onError(response.code())
                 }
             } catch (t: Throwable) {
-                t.printStackTrace()
+                Timber.e(t)
+                onError()
             }
         }
     }
@@ -71,8 +72,9 @@ class MainActivity : AppCompatActivity() {
         status_text.text = "Verbleibendes Datenvolumen: $remainingPercentage%"
     }
 
-    private fun onError(code: Int) = launch(UI) {
+    private fun onError(code: Int? = null) = launch(UI) {
         when (code) {
+            null -> status_text.text = "Nicht verfügbar"
             else -> status_text.text = "Error $code"
         }
     }
