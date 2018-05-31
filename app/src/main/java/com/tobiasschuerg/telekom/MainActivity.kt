@@ -1,5 +1,7 @@
 package com.tobiasschuerg.telekom
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import com.tobiasschuerg.telekom.backend.StatusDto
@@ -11,14 +13,23 @@ import kotlinx.coroutines.experimental.android.UI
 import kotlinx.coroutines.experimental.launch
 import timber.log.Timber
 
+
 class MainActivity : AppCompatActivity() {
+
+    private var job: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        button.setOnClickListener {
+            with(Intent(Intent.ACTION_VIEW)) {
+                data = Uri.parse("http://pass.telekom.de")
+                startActivity(this)
+            }
+        }
     }
 
-    private var job: Job? = null
 
     override fun onResume() {
         super.onResume()
@@ -38,7 +49,6 @@ class MainActivity : AppCompatActivity() {
                 t.printStackTrace()
             }
         }
-
     }
 
     override fun onPause() {
