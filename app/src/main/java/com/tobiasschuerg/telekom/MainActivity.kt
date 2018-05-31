@@ -47,11 +47,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun onStatusReceived(status: StatusDto) = launch(UI) {
+        Timber.d("Status received: $status")
         if (status.title.isNotEmpty()) {
             title = status.title
         }
-        status_text.text = "Used ${status.usedPercentage}%"
-        status_remaining.text = "Verbleibend ${status.remainingTimeStr}"
+        text_pass_name.text = "Name: ${status.passName}"
+        text_initial.text = "Initial: ${status.initialVolumeStr}"
+        text_used.text = "Verbraucht: ${status.usedVolumeStr}"
+
+        text_remaining.text = "Verbleibender Zeitraum: ${status.remainingTimeStr}"
+        val remainingPercentage = 100 - status.usedPercentage
+        progress_usage.progress = remainingPercentage
+        status_text.text = "Verbleibendes Datenvolumen: $remainingPercentage%"
     }
 
     private fun onError(code: Int) = launch(UI) {
