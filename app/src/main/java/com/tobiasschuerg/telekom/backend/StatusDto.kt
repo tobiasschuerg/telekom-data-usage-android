@@ -9,19 +9,19 @@ data class StatusDto(
         val subscriptions: List<String>,
         val hasOffers: Boolean,
 
-        val passName: String,
-        val passStage: Int,
-        val passType: Int,
-
         val nextUpdate: Int,
         val validityPeriod: Int,
 
-        val initialVolume: Long,
-        val initialVolumeStr: String,
+        val passName: String,
+        val passStage: Int, // 1 = ok, 2 = all data used
+        val passType: Int,
 
-        val usedVolume: Long,
+        val initialVolume: Long?, // available if pass stage = 1
+        val initialVolumeStr: String?, // available if pass stage = 1
+
+        val usedVolume: Long?, // available if pass stage = 1
         val usedPercentage: Int,
-        val usedVolumeStr: String,
+        val usedVolumeStr: String?, // available if pass stage = 1
         val usedAt: Long,
 
         val remainingSeconds: Int,

@@ -1,6 +1,6 @@
 package com.tobiasschuerg.telekom.backend
 
-import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.GET
 

@@ -4,19 +4,23 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import com.tobiasschuerg.telekom.backend.StatusDto
-import com.tobiasschuerg.telekom.backend.TelekomBackend
+import com.tobiasschuerg.telekom.service.TelekomService
+import com.tobiasschuerg.telekom.service.TelekomServiceImpl
+import com.tobiasschuerg.telekom.service.data.Status
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.experimental.CommonPool
-import kotlinx.coroutines.experimental.Job
-import kotlinx.coroutines.experimental.android.UI
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.launch
 import timber.log.Timber
 
 
 class MainActivity : AppCompatActivity() {
 
     private var job: Job? = null
+    private val telekomService: TelekomService by lazy {
+        TelekomServiceImpl() // TODO: inject
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,20 +38,18 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
 
-        job = launch(CommonPool) {
+        // FIXME: remove global scope
+        job = GlobalScope.launch {
             try {
-                val response = TelekomBackend.instance.getStatus().await()
-                Timber.d(response.toString())
-
-                if (response.isSuccessful) {
-                    val statusDto = response.body()!!
-                    onStatusReceived(statusDto)
-                } else {
-                    onError(response.code())
+                val status = telekomService.getStatus()
+                when (status) {
+                    is Status.Ok.Normal       -> onStatusReceived(status)
+                    is Status.Ok.LimitExeeded -> TODO()
+                    is Status.Error           -> onError(status)
                 }
             } catch (t: Throwable) {
                 Timber.e(t)
-                onError()
+                onError(null)
             }
         }
     }
@@ -57,25 +59,27 @@ class MainActivity : AppCompatActivity() {
         job?.cancel()
     }
 
-    private fun onStatusReceived(status: StatusDto) = launch(UI) {
+    // FIXME: GlobalScope
+    private fun onStatusReceived(status: Status.Ok.Normal) = GlobalScope.launch(Dispatchers.Main) {
         Timber.d("Status received: $status")
-        if (status.title.isNotEmpty()) {
-            title = status.title
+        if (status.pass.name.isNotEmpty()) {
+            title = status.pass.name
         }
-        text_pass_name.text = "Name: ${status.passName}"
-        text_initial.text = "Initial: ${status.initialVolumeStr}"
-        text_used.text = "Verbraucht: ${status.usedVolumeStr}"
+        text_pass_name.text = "Name: ${status.pass.name}"
+        text_initial.text = "Initial: ${status.initial.initialVolumeStr}"
+        text_used.text = "Verbraucht: ${status.used.usedVolumeStr}"
 
-        text_remaining.text = "Verbleibender Zeitraum: ${status.remainingTimeStr}"
-        val remainingPercentage = 100 - status.usedPercentage
-        progress_usage.progress = remainingPercentage
+        text_remaining.text = "Verbleibender Zeitraum: ${status.remaining.remainingTimeStr}"
+        val remainingPercentage = 100 - status.used.usedPercentage
+        progress_usage.progress = status.used.usedPercentage
         status_text.text = "Verbleibendes Datenvolumen: $remainingPercentage%"
     }
 
-    private fun onError(code: Int? = null) = launch(UI) {
-        when (code) {
+    // FIXME: GlobalScope
+    private fun onError(error: Status.Error?) = GlobalScope.launch(Dispatchers.Main) {
+        when (error?.code) {
             null -> status_text.text = "Nicht verfügbar"
-            else -> status_text.text = "Error $code"
+            else -> status_text.text = "Error $error.code"
         }
     }
 }
