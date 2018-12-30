@@ -1,5 +1,6 @@
 package com.tobiasschuerg.telekom.service
 
+import com.tobiasschuerg.data.Volume
 import com.tobiasschuerg.telekom.backend.StatusDto
 import com.tobiasschuerg.telekom.backend.TelekomBackend
 import com.tobiasschuerg.telekom.service.data.*
@@ -19,11 +20,14 @@ class TelekomServiceImpl : TelekomService {
             val passStage = statusDto.passStage
             return when (passStage) {
                 1    -> {
+                    val initialVolume = Volume(statusDto.initialVolume!!)
+                    val usedVolume = Volume(statusDto.usedVolume!!)
+                    val remainingVolume = initialVolume - usedVolume
                     Status.Ok.Normal(
                             pass = Pass(statusDto.passName, statusDto.passType),
-                            initial = Initial(statusDto.initialVolume!!, statusDto.initialVolumeStr!!),
-                            used = Used(statusDto.usedVolume!!, statusDto.usedPercentage, statusDto.usedVolumeStr!!, statusDto.usedAt),
-                            remaining = Remaining(statusDto.remainingSeconds, statusDto.remainingTimeStr)
+                            initial = Initial(initialVolume, statusDto.initialVolumeStr!!),
+                            used = Used(usedVolume, statusDto.usedPercentage, statusDto.usedVolumeStr!!, statusDto.usedAt),
+                            remaining = Remaining(statusDto.remainingSeconds, statusDto.remainingTimeStr, remainingVolume)
                     )
                 }
                 0    -> {

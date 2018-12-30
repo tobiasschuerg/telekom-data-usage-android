@@ -1,6 +1,8 @@
 package com.tobiasschuerg.telekom.service.data
 
+import com.tobiasschuerg.data.Volume
+
 data class Initial(
-        val initialVolume: Long,
+        val initialVolume: Volume,
         val initialVolumeStr: String
 )

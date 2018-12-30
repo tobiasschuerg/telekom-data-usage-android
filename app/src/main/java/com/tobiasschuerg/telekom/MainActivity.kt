@@ -65,14 +65,17 @@ class MainActivity : AppCompatActivity() {
         if (status.pass.name.isNotEmpty()) {
             title = status.pass.name
         }
-        text_pass_name.text = "Name: ${status.pass.name}"
-        text_initial.text = "Initial: ${status.initial.initialVolumeStr}"
-        text_used.text = "Verbraucht: ${status.used.usedVolumeStr}"
+
+        text_initial.text = "Initiales Datenvolumen: ${status.initial.initialVolumeStr}"
 
         text_remaining.text = "Verbleibender Zeitraum: ${status.remaining.remainingTimeStr}"
         val remainingPercentage = 100 - status.used.usedPercentage
-        progress_usage.progress = status.used.usedPercentage
-        status_text.text = "Verbleibendes Datenvolumen: $remainingPercentage%"
+        status_text.text = "Verbleibendes Datenvolumen: ${status.remaining.remainingVolume} ($remainingPercentage%)"
+
+        circle_progress.setProgress(status.used.usedPercentage)
+        circle_progress.getText = { progress: Int, max: Int, percentage: Float ->
+            status.used.usedVolumeStr /*+ "\n($percentage%)"*/
+        }
     }
 
     // FIXME: GlobalScope
