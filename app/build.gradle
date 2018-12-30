@@ -5,14 +5,14 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     defaultConfig {
         applicationId "com.tobiasschuerg.telekom"
         minSdkVersion 21
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
         release {
@@ -29,16 +29,16 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.1.0'
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.1.0"
 
-    implementation 'com.android.support:appcompat-v7:27.1.1'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.3'
+    implementation 'androidx.appcompat:appcompat:1.1.0-alpha01'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha3'
 
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.retrofit2:converter-moshi:2.4.0'
     implementation 'com.squareup.okhttp3:logging-interceptor:3.11.0'
     implementation 'com.jakewharton.retrofit:retrofit2-kotlin-coroutines-adapter:0.9.2'
 
+    // implementation 'com.github.tobiasschuerg:CircleProgress:1.1.0'
     implementation 'com.jakewharton.timber:timber:4.7.1'
-
 
     implementation 'com.squareup.moshi:moshi-kotlin:1.6.0'
     kapt 'com.squareup.moshi:moshi-kotlin-codegen:1.6.0'
@@ -46,6 +46,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
 
 
-    androidTestImplementation 'com.android.support.test:runner:1.0.2'
-    androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'androidx.test:runner:1.1.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
 }
